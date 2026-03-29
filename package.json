@@ -12,5 +12,8 @@
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
     "stop": "pnpm docker:down"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0"
   }
 }
