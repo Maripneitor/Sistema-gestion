@@ -5,42 +5,46 @@ const navItems = [
   { path: '/', label: 'Dashboard', icon: 'dashboard' },
   { path: '/directorio', label: 'User Directory', icon: 'group' },
   { path: '/asistencias', label: 'Attendance Control', icon: 'rule_folder' },
-  { path: '/registro', label: 'Administrative Staff', icon: 'person_add' },
+  { path: '/registro', label: 'Staff Enrollment', icon: 'how_to_reg' },
 ];
 
 const Sidebar: React.FC = () => {
   return (
-    <aside className="fixed left-0 top-0 h-full w-64 z-40 bg-slate-100 dark:bg-slate-900 flex flex-col overflow-y-auto border-r border-slate-200/50">
-      <div className="px-6 py-8">
-        <h1 className="text-xl font-black tracking-tighter text-blue-700 dark:text-blue-400 font-headline uppercase italic"> Nexus Admin </h1>
-        <p className="text-[10px] font-bold text-slate-500 mt-1 uppercase tracking-widest opacity-60">Authority Panel • v1.0</p>
+    <aside className="fixed left-0 top-0 h-full w-64 z-40 bg-slate-100 flex flex-col border-r border-slate-200/50">
+      <div className="p-6">
+        <h1 className="text-xl font-black font-headline tracking-tight text-primary uppercase leading-tight">THE CURATOR</h1>
+        <p className="text-[10px] text-on-surface-variant mt-1 font-bold tracking-[0.2em] uppercase opacity-70">Community Admin</p>
       </div>
-      
-      <nav className="flex-1 px-4 mt-6 space-y-1">
+
+      <nav className="flex-1 mt-4">
         {navItems.map((item) => (
-          <NavLink 
+          <NavLink
             key={item.path}
             to={item.path}
-            className={({ isActive }) => `flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all group ${
-              isActive 
-                ? 'bg-blue-600/10 text-blue-700 dark:text-blue-400 font-black shadow-sm border border-blue-600/15' 
-                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 hover:text-slate-700'
-            }`}
+            className={({ isActive }) => `
+              flex items-center gap-4 px-6 py-4 transition-all duration-300 group
+              ${isActive 
+                ? 'text-primary font-bold border-r-4 border-primary bg-slate-200/50' 
+                : 'text-on-surface-variant hover:bg-slate-200/40 hover:text-on-surface'
+              }
+            `}
           >
-            <span className="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">
+            <span className="material-symbols-outlined transition-transform group-hover:scale-110" style={{ fontVariationSettings: "'FILL' 0" }}>
               {item.icon}
             </span>
-            <span className="text-[13px] font-bold tracking-tight">{item.label}</span>
+            <span className="text-xs uppercase tracking-[0.1em] font-black">{item.label}</span>
           </NavLink>
         ))}
       </nav>
-      
-      <div className="p-4 mt-auto">
-        <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-slate-800/50 backdrop-blur rounded-2xl border border-slate-200/40">
-          <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-500">M</div>
+
+      <div className="p-6 border-t border-slate-200/50">
+        <div className="flex items-center gap-3 p-3 bg-white rounded-2xl shadow-premium border border-primary/5">
+          <div className="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-primary font-black shadow-inner">
+            A
+          </div>
           <div className="overflow-hidden">
-            <p className="text-[11px] font-black truncate leading-none mb-1">Mock User</p>
-            <p className="text-[9px] text-blue-600 uppercase font-black">Admin Mode</p>
+            <p className="text-[11px] font-black font-headline text-on-surface uppercase truncate tracking-tight">Admin Avatar</p>
+            <p className="text-[9px] text-primary font-bold uppercase tracking-widest opacity-60 italic">Encargado</p>
           </div>
         </div>
       </div>

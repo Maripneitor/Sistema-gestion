@@ -1,9 +1,10 @@
 version: '3.8'
 
 services:
+  # Base de Datos PostgreSQL
   postgres:
-    image: postgres:15
-    container_name: sistema_gestion_db
+    image: postgres:15-alpine
+    container_name: nexus_db
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password123
@@ -12,21 +13,50 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d sistema_gestion"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     restart: always
 
-  # Backend Service (Descomentar para integrar completamente)
-  # api:
-  #   build: ./servidor-api
-  #   container_name: sistema_gestion_api
-  #   ports:
-  #     - "3000:3000"
-  #   environment:
-  #     - DATABASE_URL=postgresql://admin:password123@postgres:5432/sistema_gestion
-  #     - JWT_SECRET=super-secret-key
-  #   links:
-  #     - postgres
-  #   depends_on:
-  #     - postgres
+  # Backend (Express + Prisma)
+  api:
+    build: ./servidor-api
+    container_name: nexus_api
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://admin:password123@postgres:5432/sistema_gestion
+      - JWT_SECRET=super-secret-key-premium
+      - NODE_ENV=development
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # Ejecutamos migraciones y seed antes de iniciar el servidor dev
+    command: >
+      sh -c "pnpm prisma migrate dev --name init && 
+             pnpm prisma db seed && 
+             pnpm dev"
+    volumes:
+      - ./servidor-api:/app
+      - /app/node_modules
+    restart: on-failure
+
+  # Frontend (React + Vite)
+  frontend:
+    build: ./aplicacion-cliente
+    container_name: nexus_frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:3000/api
+    depends_on:
+      - api
+    volumes:
+      - ./aplicacion-cliente:/app
+      - /app/node_modules
+    restart: always
 
 volumes:
   postgres_data:

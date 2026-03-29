@@ -1,8 +1,6 @@
 import axios from 'axios';
-// import { useAuthStore } from '../store/authStore';
+import { useAuthStore } from '../store/authStore';
 
-// TODO: Descomentar al integrar el backend en Docker
-/*
 const apiClient = axios.create({
   baseURL: 'http://localhost:3000/api',
 });
@@ -19,8 +17,5 @@ apiClient.interceptors.request.use(
     return Promise.reject(error);
   }
 );
-*/
-
-const apiClient = axios.create(); // Placeholder para mocks
 
 export default apiClient;

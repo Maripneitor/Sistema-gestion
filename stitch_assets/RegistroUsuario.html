@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-container": "#e3dbfd",
+              "on-error": "#fff7f6",
+              "secondary-fixed-dim": "#c4d5f7",
+              "surface": "#f8f9fb",
+              "secondary-fixed": "#d6e3ff",
+              "error-container": "#fe8983",
+              "inverse-primary": "#5c8bff",
+              "outline": "#737c81",
+              "secondary": "#4f607c",
+              "surface-container-high": "#e2e9ee",
+              "on-surface": "#2b3438",
+              "tertiary": "#615b77",
+              "on-tertiary-container": "#524c68",
+              "surface-container-lowest": "#ffffff",
+              "secondary-container": "#d6e3ff",
+              "tertiary-fixed": "#e3dbfd",
+              "surface-container": "#eaeef2",
+              "primary-fixed-dim": "#c6d3ff",
+              "on-primary-fixed-variant": "#0253cd",
+              "surface-bright": "#f8f9fb",
+              "surface-container-low": "#f1f4f7",
+              "on-background": "#2b3438",
+              "secondary-dim": "#445470",
+              "on-primary-fixed": "#003993",
+              "on-tertiary-fixed": "#3f3a54",
+              "on-tertiary": "#fcf7ff",
+              "on-secondary-fixed": "#30405b",
+              "on-primary-container": "#004ab9",
+              "on-surface-variant": "#586065",
+              "surface-variant": "#dbe4ea",
+              "surface-tint": "#0c56d0",
+              "on-error-container": "#752121",
+              "inverse-surface": "#0c0f10",
+              "tertiary-dim": "#554f6b",
+              "inverse-on-surface": "#9b9d9f",
+              "background": "#f8f9fb",
+              "primary-fixed": "#dae2ff",
+              "outline-variant": "#aab3b9",
+              "surface-container-highest": "#dbe4ea",
+              "on-tertiary-fixed-variant": "#5c5672",
+              "on-secondary-fixed-variant": "#4c5c78",
+              "primary-dim": "#004aba",
+              "primary": "#0c56d0",
+              "error-dim": "#4e0309",
+              "error": "#9f403d",
+              "on-secondary-container": "#42526e",
+              "surface-dim": "#d1dce2",
+              "on-primary": "#f8f7ff",
+              "primary-container": "#dae2ff",
+              "tertiary-fixed-dim": "#d5cdee",
+              "on-secondary": "#f8f8ff"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+<!-- Top Navigation Anchor -->
+<nav class="fixed top-0 right-0 left-0 md:left-64 h-16 flex justify-between items-center px-8 z-30 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200/15 dark:border-slate-800/15 shadow-sm dark:shadow-none">
+<div class="flex items-center gap-4">
+<span class="text-lg font-black text-slate-800 dark:text-slate-100">Admin Curator</span>
+<div class="hidden md:flex items-center bg-surface-container rounded-lg px-3 py-1.5 gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-sm" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-48 font-body" placeholder="Buscar expedientes..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden md:flex gap-4 items-center">
+<span class="text-blue-700 dark:text-blue-400 font-bold text-sm">Sync Status</span>
+</div>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors" data-icon="sync">sync</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors" data-icon="account_circle">account_circle</span>
+</div>
+</div>
+</nav>
+<!-- Side Navigation Anchor -->
+<aside class="fixed left-0 top-0 h-full w-64 z-40 bg-slate-100 dark:bg-slate-900 border-r-0 hidden md:block">
+<div class="p-6">
+<h1 class="text-xl font-bold tracking-tight text-blue-700 dark:text-blue-400 mb-1">The Curator</h1>
+<p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest opacity-70">Community Admin</p>
+</div>
+<nav class="mt-4 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-medium tracking-wide">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-blue-700 dark:text-blue-400 font-bold border-r-4 border-blue-700 dark:border-blue-400 bg-slate-200/50 dark:bg-slate-800/50" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-bold tracking-wide">User Directory</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="rule_folder">rule_folder</span>
+<span class="font-medium tracking-wide">Attendance Control</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-medium tracking-wide">Settings</span>
+</a>
+</nav>
+<div class="absolute bottom-8 left-6 right-6 p-4 rounded-xl bg-surface-container-lowest shadow-sm">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="close up professional portrait of a male administrator in a light blue office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuNuzwIbEHbOx42OaFa11x-NpdHg7DDZbgjNxkddiVbtRtMP0thXRFAgs8YQDNoW9O-jt2fdWs0ZGw6bL3N6z5RDNqXXk7i1s0-75Q5F2ncA3xNfKfud2KvKR1Gbe03kS_c9rueFxgsFElnbvpqfMtpoYSYSjguA1WbY6nm69I0KAWapRXVMsQRfRabcMJ8SK9bb9URSoaaMsHfYsH-JgPxcd1rfF21-WuvAUVMsr6FXyltvS9DUsDpUOyvK2jJn0fY5HK2UgCZcU"/>
+<div>
+<p class="text-sm font-bold text-on-surface">Admin Avatar</p>
+<p class="text-[10px] text-on-surface-variant">Level 4 Moderator</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="pt-24 pb-12 px-4 md:pl-72 md:pr-12">
+<div class="max-w-6xl mx-auto">
+<!-- Header Section -->
+<header class="mb-10">
+<div class="flex items-center gap-2 text-sm text-on-surface-variant font-label tracking-wider mb-2">
+<span>DIRECTORIO</span>
+<span class="material-symbols-outlined text-[12px]" data-icon="chevron_right">chevron_right</span>
+<span>NUEVO REGISTRO</span>
+</div>
+<h2 class="text-4xl font-extrabold text-on-surface tracking-tight leading-none mb-4">Alta de Curador Junior</h2>
+<p class="text-on-surface-variant max-w-2xl text-lg font-body leading-relaxed">
+                    Complete la ficha técnica del usuario siguiendo los protocolos de cumplimiento del sistema. Los campos marcados con <span class="text-primary font-bold">⚡</span> son obligatorios.
+                </p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Main Form Section -->
+<div class="lg:col-span-8">
+<div class="bg-surface-container-lowest rounded-xl p-8 shadow-sm">
+<form class="space-y-8">
+<!-- Section: Identidad -->
+<section>
+<div class="flex items-center gap-3 mb-6">
+<div class="w-1 h-6 bg-primary rounded-full"></div>
+<h3 class="text-xl font-bold text-on-surface">Identidad Digital</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="block text-xs font-semibold text-on-surface-variant tracking-wider uppercase">Nombre App ⚡</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border-b-2 border-primary outline-none focus:ring-0 p-3 rounded-t-md font-body text-on-surface" placeholder="Ej: AdminName⚡" type="text" value="Curador_Alpha⚡"/>
+<div class="mt-1 flex items-center gap-1 text-[11px] text-primary">
+<span class="material-symbols-outlined text-[14px]" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                                Formato correcto: Finaliza con rayo.
+                                            </div>
+</div>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-semibold text-on-surface-variant tracking-wider uppercase">Nombre Real</label>
+<input class="w-full bg-surface-container-low border-b-2 border-outline-variant outline-none focus:border-primary focus:ring-0 p-3 rounded-t-md font-body text-on-surface transition-all" placeholder="Nombre completo" type="text"/>
+</div>
+</div>
+</section>
+<!-- Section: Restricciones de Acceso -->
+<section class="bg-surface-container-low/50 -mx-8 px-8 py-8">
+<div class="flex items-center gap-3 mb-6">
+<div class="w-1 h-6 bg-primary rounded-full"></div>
+<h3 class="text-xl font-bold text-on-surface">Restricciones y Cumplimiento</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="space-y-4">
+<div class="space-y-2">
+<label class="block text-xs font-semibold text-on-surface-variant tracking-wider uppercase">Edad Requerida (&gt;18)</label>
+<input class="w-full bg-surface-container-lowest border-b-2 border-error outline-none focus:ring-0 p-3 rounded-t-md font-body text-error" type="number" value="17"/>
+<div class="flex items-center gap-1.5 p-2 bg-error-container/20 rounded-md text-[11px] text-on-error-container font-medium">
+<span class="material-symbols-outlined text-[16px]" data-icon="warning">warning</span>
+<span>RECHAZADO: El usuario debe ser mayor de 18 años para operar.</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-semibold text-on-surface-variant tracking-wider uppercase">País de Residencia</label>
+<select class="w-full bg-surface-container-lowest border-b-2 border-error outline-none focus:ring-0 p-3 rounded-t-md font-body text-error appearance-none">
+<option selected="">España</option>
+<option>Perú</option>
+<option>México</option>
+<option>Argentina</option>
+</select>
+<div class="flex items-center gap-1.5 p-2 bg-error-container/20 rounded-md text-[11px] text-on-error-container font-medium">
+<span class="material-symbols-outlined text-[16px]" data-icon="block">block</span>
+<span>BLOQUEADO: Jurisdicción no permitida temporalmente.</span>
+</div>
+</div>
+</div>
+<div class="space-y-6">
+<div class="p-4 rounded-xl border border-outline-variant/20 bg-surface-container-lowest space-y-4">
+<div class="flex items-center justify-between">
+<div>
+<p class="font-bold text-on-surface text-sm">Perfil Streamer</p>
+<p class="text-xs text-on-surface-variant">¿Crea contenido en vivo?</p>
+</div>
+<!-- Custom Styled Toggle -->
+<div class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</div>
+</div>
+<div class="flex items-start gap-2 text-[11px] leading-tight text-on-error-container bg-error-container/10 p-2 rounded-md">
+<span class="material-symbols-outlined text-[14px] shrink-0" data-icon="info">info</span>
+<p>INCOMPATIBILIDAD: Los curadores con perfil de Streamer activo no pueden gestionar auditorías de asistencia.</p>
+</div>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-semibold text-on-surface-variant tracking-wider uppercase">Disponibilidad Operativa</label>
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1.5 rounded-full text-xs font-bold bg-surface-container-high text-on-surface-variant opacity-40" type="button">L</button>
+<button class="px-3 py-1.5 rounded-full text-xs font-bold bg-surface-container-high text-on-surface-variant opacity-40" type="button">M</button>
+<button class="px-3 py-1.5 rounded-full text-xs font-bold bg-surface-container-high text-on-surface-variant opacity-40" type="button">M</button>
+<button class="px-3 py-1.5 rounded-full text-xs font-bold bg-surface-container-high text-on-surface-variant opacity-40" type="button">J</button>
+<button class="px-3 py-1.5 rounded-full text-xs font-bold bg-surface-container-high text-on-surface-variant opacity-40" type="button">V</button>
+<button class="px-3 py-1.5 rounded-full text-xs font-bold bg-primary text-on-primary" type="button">S</button>
+<button class="px-3 py-1.5 rounded-full text-xs font-bold bg-primary text-on-primary" type="button">D</button>
+</div>
+<p class="text-[10px] text-on-surface-variant italic mt-1 font-medium">Requisito obligatorio: Fines de semana completos.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: Contacto -->
+<section>
+<div class="flex items-center gap-3 mb-6">
+<div class="w-1 h-6 bg-primary rounded-full"></div>
+<h3 class="text-xl font-bold text-on-surface">Canales de Comunicación</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="space-y-2">
+<label class="block text-xs font-semibold text-on-surface-variant tracking-wider uppercase">WhatsApp</label>
+<div class="flex items-center bg-surface-container-low rounded-t-md px-3 border-b-2 border-outline-variant">
+<span class="text-on-surface-variant text-sm pr-2 border-r border-outline-variant/30">+34</span>
+<input class="bg-transparent border-none focus:ring-0 p-3 w-full text-on-surface" placeholder="600 000 000" type="text"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-semibold text-on-surface-variant tracking-wider uppercase">Discord Tag</label>
+<input class="w-full bg-surface-container-low border-b-2 border-outline-variant outline-none focus:border-primary focus:ring-0 p-3 rounded-t-md font-body text-on-surface" placeholder="User#0000" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-semibold text-on-surface-variant tracking-wider uppercase">Instagram</label>
+<input class="w-full bg-surface-container-low border-b-2 border-outline-variant outline-none focus:border-primary focus:ring-0 p-3 rounded-t-md font-body text-on-surface" placeholder="@usuario" type="text"/>
+</div>
+</div>
+</section>
+<!-- Actions -->
+<div class="pt-8 border-t border-outline-variant/10 flex justify-end gap-4">
+<button class="px-6 py-2.5 rounded-md font-bold text-on-surface-variant hover:bg-surface-container-high transition-colors" type="button">DESCARTAR</button>
+<button class="bg-gradient-to-br from-primary to-primary-dim px-8 py-2.5 rounded-md font-extrabold text-on-primary shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-2" type="button">
+<span class="material-symbols-outlined" data-icon="save">save</span>
+                                    REGISTRAR EXPEDIENTE
+                                </button>
+</div>
+</form>
+</div>
+</div>
+<!-- Secondary Column / Info Cards -->
+<div class="lg:col-span-4 space-y-6">
+<!-- Status Card -->
+<div class="bg-surface-container rounded-xl p-6 border-l-4 border-error shadow-sm">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-error" data-icon="cancel" style="font-variation-settings: 'FILL' 1;">cancel</span>
+<h4 class="font-extrabold text-on-surface text-lg">Validación Fallida</h4>
+</div>
+<ul class="space-y-3">
+<li class="flex items-start gap-3 text-sm text-on-error-container font-medium">
+<span class="material-symbols-outlined text-[18px] mt-0.5" data-icon="chevron_right">chevron_right</span>
+<span>Edad insuficiente: Se requieren 18+ años.</span>
+</li>
+<li class="flex items-start gap-3 text-sm text-on-error-container font-medium">
+<span class="material-symbols-outlined text-[18px] mt-0.5" data-icon="chevron_right">chevron_right</span>
+<span>Territorio restringido: España detectado.</span>
+</li>
+<li class="flex items-start gap-3 text-sm text-on-error-container font-medium">
+<span class="material-symbols-outlined text-[18px] mt-0.5" data-icon="chevron_right">chevron_right</span>
+<span>Conflicto de intereses: Rol de Streamer activo.</span>
+</li>
+</ul>
+</div>
+<!-- Guidelines Card -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm overflow-hidden relative">
+<div class="absolute -top-10 -right-10 opacity-5">
+<span class="material-symbols-outlined text-[120px]" data-icon="shield">shield</span>
+</div>
+<h4 class="font-bold text-on-surface mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="verified_user">verified_user</span>
+                            Guía Editorial
+                        </h4>
+<div class="space-y-4 relative z-10">
+<p class="text-xs text-on-surface-variant leading-relaxed">
+                                El proceso de registro requiere la validación de tres pilares fundamentales: **Identidad, Disponibilidad y Neutralidad**.
+                            </p>
+<div class="bg-surface p-3 rounded-lg space-y-2">
+<div class="flex justify-between items-center">
+<span class="text-[10px] font-bold text-on-surface-variant">COMPLETITUD</span>
+<span class="text-[10px] font-black text-primary">85%</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[85%]"></div>
+</div>
+</div>
+<p class="text-[10px] text-on-surface-variant/80 italic">
+                                * Una vez registrado, el perfil pasará a fase de "Shadow Audit" durante 14 días naturales.
+                            </p>
+</div>
+</div>
+<!-- Map Location (Implicit) -->
+<div class="rounded-xl overflow-hidden h-48 relative shadow-sm group">
+<div class="absolute inset-0 bg-blue-900/10 group-hover:bg-transparent transition-colors z-10 pointer-events-none"></div>
+<img class="w-full h-full object-cover" data-alt="minimalist architectural map detail with clean lines and soft blue tones representing an urban grid" data-location="Madrid" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkKMjiuA546OuAAdsCa-0b9lwrwoKHMXAHCrDEenPf9izps0a13po1P_MrUZ8YxqyXdn5qaNuHlIJ1z3TRFCfxIP4SVVHZk0Zoi6K1e47FdohN_vg0nmBUKImpw0HtIjahI26ppryIbYPU3vBje7fJf7o3GYD8HJFYuiLlGgamQMOYA6D7sQS1dSsyhYCu1s-VfY9qp_o1qcoN6wf6Ghi0exGOtFE5X_fyf7heqPTUtwlbvMroje-tMe_kwoDLRGR-3oUIhMDA944"/>
+<div class="absolute bottom-4 left-4 z-20 glass-panel px-3 py-1.5 rounded-full flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[16px]" data-icon="location_on" style="font-variation-settings: 'FILL' 1;">location_on</span>
+<span class="text-[10px] font-bold text-on-surface">Detección: Madrid, ES (Rechazado)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Contextual FAB Suppression: FAB not rendered on this Task-Focused/Details screen per mandate -->
+</body></html>
