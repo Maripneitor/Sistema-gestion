@@ -22,7 +22,7 @@ services:
 
   # Backend (Express + Prisma)
   api:
-    build: ./servidor-api
+    build: ./backend
     container_name: nexus_api
     ports:
       - "3000:3000"
@@ -39,13 +39,13 @@ services:
              pnpm prisma db seed && 
              pnpm dev"
     volumes:
-      - ./servidor-api:/app
+      - ./backend:/app
       - /app/node_modules
     restart: on-failure
 
   # Frontend (React + Vite)
   frontend:
-    build: ./aplicacion-cliente
+    build: ./frontend
     container_name: nexus_frontend
     ports:
       - "5173:5173"
@@ -54,7 +54,7 @@ services:
     depends_on:
       - api
     volumes:
-      - ./aplicacion-cliente:/app
+      - ./frontend:/app
       - /app/node_modules
     restart: always
 
