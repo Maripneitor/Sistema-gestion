@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Miembro {
+  id                 String             @id @default(uuid()) @db.Uuid
+  nombre_real        String
+  nombre_app         String             // UTF-8 support is native in PostgreSQL
+  nombre_tiktok      String?
+  telefono           String?
+  edad               Int
+  pais               String
+  nivel              Int                @default(1)
+  faltas_acumuladas  Int                @default(0)
+  es_super_fan       Boolean            @default(false)
+  estado             EstadoMiembro      @default(ACTIVO)
+  fecha_registro     DateTime           @default(now())
+  
+  asistencias        Asistencia[]
+  grupos             Miembros_Grupos[]
+
+  @@map("miembros")
+}
+
+enum EstadoMiembro {
+  ACTIVO
+  INACTIVO
+  CON_PERMISO
+  EN_RIESGO_DE_BAJA
+}
+
+model Asistencia {
+  id                Int              @id @default(autoincrement())
+  miembro_id        String           @db.Uuid
+  fecha             DateTime         @default(now())
+  estado_asistencia EstadoAsistencia
+  registrado_por    String
+
+  miembro           Miembro          @relation(fields: [miembro_id], references: [id], onDelete: Cascade)
+
+  @@map("asistencias")
+}
+
+enum EstadoAsistencia {
+  PRESENTE
+  FALTA
+  PERMISO
+}
+
+model Grupo {
+  id                     Int               @id @default(autoincrement())
+  nombre_grupo           String
+  plataforma             PlataformaGrupo
+  nivel_minimo_requerido Int               @default(1)
+  
+  miembros               Miembros_Grupos[]
+
+  @@map("grupos")
+}
+
+enum PlataformaGrupo {
+  WHATSAPP
+  APP_EXTERNA
+}
+
+model Miembros_Grupos {
+  miembro_id    String   @db.Uuid
+  grupo_id      Int
+  fecha_ingreso DateTime @default(now())
+
+  miembro       Miembro  @relation(fields: [miembro_id], references: [id], onDelete: Cascade)
+  grupo         Grupo    @relation(fields: [grupo_id], references: [id], onDelete: Cascade)
+
+  @@id([miembro_id, grupo_id])
+  @@map("miembros_grupos")
+}
+model Usuario {
+  id        String   @id @default(uuid()) @db.Uuid
+  email     String   @unique
+  password  String
+  nombre    String
+  rol       RolUsuario @default(ASISTENTE)
+  fecha_creacion DateTime @default(now())
+
+  @@map("usuarios")
+}
+
+enum RolUsuario {
+  ENCARGADO
+  ASISTENTE
+}

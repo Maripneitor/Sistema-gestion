@@ -1,0 +1,36 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+.editorial-gradient {
+  background: linear-gradient(135deg, #0c56d0 0%, #004aba 100%);
+}
+
+.bg-mesh {
+  background-color: #f8f9fb;
+  background-image: radial-gradient(at 0% 0%, #dae2ff 0, transparent 50%), 
+                    radial-gradient(at 100% 0%, #e3dbfd 0, transparent 50%);
+}
+
+.input-accent {
+  border: none;
+  border-bottom: 2px solid #aab3b9;
+  transition: border-color 0.2s ease;
+}
+
+.input-accent:focus {
+  outline: none;
+  border-bottom-color: #0c56d0;
+  box-shadow: none;
+}

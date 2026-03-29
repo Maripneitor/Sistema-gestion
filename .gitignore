@@ -1,0 +1,28 @@
+# Node
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Prisma
+.env
+/servidor-api/.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+/aplicacion-cliente/dist
+/servidor-api/dist
+
+# Docker
+.docker/

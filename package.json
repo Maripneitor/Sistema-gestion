@@ -1,0 +1,16 @@
+{
+  "name": "sistema-gestion",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm docker:up && pnpm --parallel --filter '*' run dev",
+    "build": "pnpm --parallel --filter '*' run build",
+    "setup": "pnpm install && pnpm docker:up && pnpm db:migrate",
+    "db:migrate": "pnpm --filter servidor-api exec prisma migrate dev",
+    "db:generate": "pnpm --filter servidor-api exec prisma generate",
+    "db:studio": "pnpm --filter servidor-api exec prisma studio",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "stop": "pnpm docker:down"
+  }
+}
