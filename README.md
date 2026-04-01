@@ -65,6 +65,20 @@ Asegúrate de tener definidas estas variables:
 
 ---
 
+## 🔄 Flujo de Información y Navegación
+
+El sistema está diseñado como un ecosistema interconectado donde el **Dashboard** es el centro de mando.
+
+1.  **Ingreso**: Tras el login, el usuario accede al Dashboard.
+2.  **Dashboard**: Muestra KPIs dinámicos. Al hacer clic en cualquier métrica o botón de "Acceso Directo", el sistema te redirige al módulo correspondiente.
+3.  **Gestión**:
+    - **Directorio**: Control total de la base de datos de miembros.
+    - **Asistencias**: Registro diario y visualización de historial de cumplimiento.
+    - **Registro**: Formulario especializado para el onboarding de nuevos curadores.
+4.  **Sincronización**: Los datos se guardan en Postgres y se reflejan en las vistas mediante el API de Node.js.
+
+---
+
 ## 🛡️ Roles y Accesos
 - **ENCARGADO**: Acceso total (Dashboard, Directorio, Registro de Staff).
 - **ASISTENTE**: Acceso a Dashboard y Directorio (Solo lectura/edición limitada).

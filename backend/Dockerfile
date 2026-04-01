@@ -1,5 +1,8 @@
-# Usar la imagen oficial de Node.js
-FROM node:20-alpine
+# Usar la imagen oficial de Node.js (slim es mejor para dependencias binarias como Prisma)
+FROM node:20-slim
+
+# Instalar dependencias necesarias para Prisma en slim
+RUN apt-get update -y && apt-get install -y openssl
 
 # Crear directorio de trabajo
 WORKDIR /app
@@ -8,7 +11,9 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml* ./
 
 # Instalar pnpm globalmente e instalar dependencias
-RUN npm install -g pnpm && pnpm install
+RUN npm install -g pnpm && \
+    pnpm config set only-built-dependencies --json '["@prisma/engines", "prisma"]' && \
+    pnpm install
 
 # Copiar el resto del código
 COPY . .

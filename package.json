@@ -3,17 +3,29 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "pnpm docker:up && pnpm --parallel --filter '*' run dev",
+    "dev": "pnpm docker:up && pnpm --filter frontend dev",
     "build": "pnpm --parallel --filter '*' run build",
     "setup": "pnpm install && pnpm docker:up && pnpm db:migrate",
     "db:migrate": "pnpm --filter backend exec prisma migrate dev",
+    "db:reset": "pnpm --filter backend exec prisma migrate reset --force",
     "db:generate": "pnpm --filter backend exec prisma generate",
     "db:studio": "pnpm --filter backend exec prisma studio",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "docker:restart": "docker compose restart",
+    "logs": "pnpm docker:logs",
+    "restart": "pnpm docker:restart",
     "stop": "pnpm docker:down"
   },
   "devDependencies": {
     "tsx": "^4.21.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/engines",
+      "esbuild",
+      "prisma"
+    ]
   }
 }

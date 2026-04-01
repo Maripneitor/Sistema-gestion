@@ -1,89 +1,122 @@
-import { PrismaClient, RolUsuario, PlataformaGrupo, EstadoAsistencia } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('🌱 Fase 1: Limpiando base de datos...');
+  await prisma.sesion.deleteMany();
+  await prisma.auditoriaLog.deleteMany();
   await prisma.asistencia.deleteMany();
-  await prisma.miembros_Grupos.deleteMany();
-  await prisma.miembro.deleteMany();
-  await prisma.grupo.deleteMany();
+  await prisma.permiso.deleteMany();
+  await prisma.alerta.deleteMany();
+  await prisma.configuracion.deleteMany();
+  await prisma.sincronizacion.deleteMany();
+  await prisma.listaEspera.deleteMany();
+  await prisma.bajasUsuario.deleteMany();
+  await prisma.usuarioGrupoHistorial.deleteMany();
   await prisma.usuario.deleteMany();
+  await prisma.rol.deleteMany();
+  await prisma.grupo.deleteMany();
 
-  console.log('🌱 Fase 2: Creando usuarios admin y asistente...');
-  // Nota: En producción usar mayor número de rondas, 10 es estándar para dev
+  console.log('🌱 Fase 2: Creando Roles...');
+  const roleAdmin = await prisma.rol.create({
+    data: {
+      nombre: 'ADMIN',
+      descripcion: 'Acceso total al sistema',
+    },
+  });
+
+  const roleEncargado = await prisma.rol.create({
+    data: {
+      nombre: 'ENCARGADO',
+      descripcion: 'Gestión completa de miembros y asistencias',
+    },
+  });
+
+  const roleAsistente = await prisma.rol.create({
+    data: {
+      nombre: 'ASISTENTE',
+      descripcion: 'Lectura limitada y control de pase',
+    },
+  });
+
+  console.log('🌱 Fase 3: Creando Grupos Iniciales...');
+  const grupoAlfa = await prisma.grupo.create({
+    data: {
+      nombre: 'Alfa',
+      descripcion: 'Grupo principal de operaciones',
+    },
+  });
+
+  const grupoBeta = await prisma.grupo.create({
+    data: {
+      nombre: 'Beta',
+      descripcion: 'Grupo secundario de soporte',
+    },
+  });
+
+  console.log('🌱 Fase 4: Creando Usuario Administrador...');
   const hashedPassword = await bcrypt.hash('password123', 10);
   
-  await prisma.usuario.createMany({
+  const adminUser = await prisma.usuario.create({
+    data: {
+      email: 'admin@sistema.com',
+      password_hash: hashedPassword,
+      nombre: 'Administrador Senior',
+      edad: 25,
+      rol_id: roleAdmin.id,
+      grupo_id: grupoAlfa.id,
+      estado: 'ACTIVO',
+      app_name: 'Nexus_Admin⚡',
+    },
+  });
+
+  console.log('🌱 Fase 5: Creando Usuarios de Prueba (Curadores)...');
+  const user1 = await prisma.usuario.create({
+    data: {
+      email: 'curador1@sistema.com',
+      password_hash: hashedPassword,
+      nombre: 'Juan Pérez',
+      edad: 28,
+      rol_id: roleAsistente.id,
+      grupo_id: grupoAlfa.id,
+      estado: 'ACTIVO',
+      app_name: 'JuanP_Curator⚡',
+      telefono: '+34 600 000 001',
+    },
+  });
+
+  console.log('🌱 Fase 6: Generando Datos de Operación Inicial...');
+  await prisma.asistencia.create({
+    data: {
+      usuario_id: user1.id,
+      fecha: new Date(),
+      estado: 'PRESENTE',
+      observaciones: 'Ingreso puntual sistema Nexus',
+    },
+  });
+
+  await prisma.alerta.create({
+    data: {
+      usuario_id: user1.id,
+      tipo: 'INACTIVIDAD',
+      mensaje: 'El usuario no ha registrado actividad hoy',
+      nivel: 'INFO',
+    },
+  });
+
+  await prisma.configuracion.createMany({
     data: [
-      {
-        email: 'admin@sistema.com',
-        password: hashedPassword,
-        nombre: 'Administrador Senior',
-        rol: RolUsuario.ENCARGADO,
-      },
-      {
-        email: 'asistente@sistema.com',
-        password: hashedPassword,
-        nombre: 'Asistente de Turno',
-        rol: RolUsuario.ASISTENTE,
-      }
-    ]
+      { clave: 'SYSTEM_NAME', valor: 'Nexus Admin Authority', descripcion: 'Nombre visible de la plataforma' },
+      { clave: 'MAINTENANCE_MODE', valor: 'false', descripcion: 'Estado de mantenimiento global' },
+    ],
   });
-
-  console.log('🌱 Fase 3: Creando grupos base...');
-  const whatsappStaff = await prisma.grupo.create({
-    data: {
-      nombre_grupo: 'Staff Principal (WhatsApp)',
-      plataforma: PlataformaGrupo.WHATSAPP,
-      nivel_minimo_requerido: 5,
-    }
-  });
-
-  const appExterna = await prisma.grupo.create({
-    data: {
-      nombre_grupo: 'Nivel Avanzado (App)',
-      plataforma: PlataformaGrupo.APP_EXTERNA,
-      nivel_minimo_requerido: 10,
-    }
-  });
-
-  console.log('🌱 Fase 4: Creando miembros de prueba...');
-  const miembrosData = [
-    { nombre_real: 'Juan Pérez', nombre_app: 'JuanP_UX', edad: 25, pais: 'México', nivel: 12 },
-    { nombre_real: 'María García', nombre_app: 'MariG_Dev', edad: 22, pais: 'España', nivel: 20 },
-    { nombre_real: 'Carlos Rodríguez', nombre_app: 'Carlitos_Prod', edad: 28, pais: 'Chile', nivel: 8 },
-    { nombre_real: 'Ana Martínez', nombre_app: 'AnaM_QA', edad: 24, pais: 'Colombia', nivel: 15 },
-    { nombre_real: 'Luis Sánchez', nombre_app: 'LuisS_Backend', edad: 30, pais: 'Argentina', nivel: 5 },
-  ];
-
-  for (const m of miembrosData) {
-    const miembro = await prisma.miembro.create({
-      data: {
-        ...m,
-        grupos: {
-          create: {
-            grupo_id: m.nivel >= 10 ? appExterna.id : whatsappStaff.id
-          }
-        }
-      }
-    });
-    
-    // Asistencia inicial para cada uno
-    await prisma.asistencia.create({
-      data: {
-        miembro_id: miembro.id,
-        estado_asistencia: EstadoAsistencia.PRESENTE,
-        registrado_por: 'admin@sistema.com'
-      }
-    });
-  }
 
   console.log('✅ Seeding completado con éxito.');
   console.log('🔑 Credenciales generadas:');
   console.log('   - Admin: admin@sistema.com / password123');
-  console.log('   - Asistente: asistente@sistema.com / password123');
+  console.log('   - Acceso Rápido: curador1@sistema.com / password123');
 }
 
 main()

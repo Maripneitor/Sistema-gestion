@@ -4,94 +4,197 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
+// =========================
+// USUARIOS Y ROLES
+// =========================
 
-
-model Miembro {
-  id                 String             @id @default(uuid()) @db.Uuid
-  nombre_real        String
-  nombre_app         String             // UTF-8 support is native in PostgreSQL
-  nombre_tiktok      String?
-  telefono           String?
-  edad               Int
-  pais               String
-  nivel              Int                @default(1)
-  faltas_acumuladas  Int                @default(0)
-  es_super_fan       Boolean            @default(false)
-  estado             EstadoMiembro      @default(ACTIVO)
-  fecha_registro     DateTime           @default(now())
+model Usuario {
+  id               String    @id @default(uuid()) @db.Uuid
+  nombre           String    @db.VarChar(120)
+  email            String    @unique @db.VarChar(120)
+  password_hash    String    @db.Text
+  edad             Int?
   
-  asistencias        Asistencia[]
-  grupos             Miembros_Grupos[]
-
-  @@map("miembros")
+  // Nuevos campos de gestión
+  estado           String    @default("EN_ESPERA") @db.VarChar(20)
+  activo           Boolean   @default(true)
+  eliminado        Boolean   @default(false)
+  observaciones    String?   @db.Text
+  
+  fecha_registro   DateTime  @default(now())
+  ultima_actividad DateTime?
+  avatar_url       String?   @db.Text
+  telefono         String?   @db.VarChar(20)
+  app_name         String?   @db.VarChar(100)
+  
+  rol_id           String?   @db.Uuid
+  rol              Rol?      @relation(fields: [rol_id], references: [id])
+  
+  grupo_id         String?   @db.Uuid
+  grupo            Grupo?    @relation(fields: [grupo_id], references: [id])
+  
+  asistencias      Asistencia[]
+  permisos         Permiso[]
+  alertas          Alerta[]
+  sesiones         Sesion[]
+  historial_grupos UsuarioGrupoHistorial[]
+  listas_espera    ListaEspera[]
+  bajas            BajasUsuario[]
+  
+  @@map("usuarios")
 }
 
-enum EstadoMiembro {
-  ACTIVO
-  INACTIVO
-  CON_PERMISO
-  EN_RIESGO_DE_BAJA
-}
-
-model Asistencia {
-  id                Int              @id @default(autoincrement())
-  miembro_id        String           @db.Uuid
-  fecha             DateTime         @default(now())
-  estado_asistencia EstadoAsistencia
-  registrado_por    String
-
-  miembro           Miembro          @relation(fields: [miembro_id], references: [id], onDelete: Cascade)
-
-  @@map("asistencias")
-}
-
-enum EstadoAsistencia {
-  PRESENTE
-  FALTA
-  PERMISO
+model Rol {
+  id          String    @id @default(uuid()) @db.Uuid
+  nombre      String    @unique @db.VarChar(50)
+  descripcion String?   @db.Text
+  created_at  DateTime? @default(now())
+  
+  usuarios    Usuario[]
+  
+  @@map("roles")
 }
 
 model Grupo {
-  id                     Int               @id @default(autoincrement())
-  nombre_grupo           String
-  plataforma             PlataformaGrupo
-  nivel_minimo_requerido Int               @default(1)
+  id          String    @id @default(uuid()) @db.Uuid
+  nombre      String    @db.VarChar(100)
+  descripcion String?   @db.Text
+  activo      Boolean   @default(true)
+  created_at  DateTime? @default(now())
   
-  miembros               Miembros_Grupos[]
+  usuarios    Usuario[]
+  historial_anterior UsuarioGrupoHistorial[] @relation("GrupoAnterior")
+  historial_nuevo    UsuarioGrupoHistorial[] @relation("GrupoNuevo")
 
   @@map("grupos")
 }
 
-enum PlataformaGrupo {
-  WHATSAPP
-  APP_EXTERNA
+// =========================
+// GESTIÓN OPERATIVA
+// =========================
+
+model Asistencia {
+  id             String    @id @default(uuid()) @db.Uuid
+  usuario_id     String    @db.Uuid
+  usuario        Usuario   @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  fecha          DateTime  @db.Date
+  estado         String    @default("PRESENTE") @db.VarChar(20)
+  observaciones  String?   @db.Text
+  created_at     DateTime? @default(now())
+  
+  @@map("asistencias")
 }
 
-model Miembros_Grupos {
-  miembro_id    String   @db.Uuid
-  grupo_id      Int
-  fecha_ingreso DateTime @default(now())
-
-  miembro       Miembro  @relation(fields: [miembro_id], references: [id], onDelete: Cascade)
-  grupo         Grupo    @relation(fields: [grupo_id], references: [id], onDelete: Cascade)
-
-  @@id([miembro_id, grupo_id])
-  @@map("miembros_grupos")
-}
-model Usuario {
-  id        String   @id @default(uuid()) @db.Uuid
-  email     String   @unique
-  password  String
-  nombre    String
-  rol       RolUsuario @default(ASISTENTE)
-  fecha_creacion DateTime @default(now())
-
-  @@map("usuarios")
+model Permiso {
+  id           String    @id @default(uuid()) @db.Uuid
+  usuario_id   String    @db.Uuid
+  usuario      Usuario   @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  fecha_inicio DateTime  @db.Date
+  fecha_fin    DateTime  @db.Date
+  motivo       String?   @db.Text
+  aprobado     Boolean   @default(false)
+  created_at   DateTime? @default(now())
+  
+  @@map("permisos")
 }
 
-enum RolUsuario {
-  ENCARGADO
-  ASISTENTE
+model Alerta {
+  id         String    @id @default(uuid()) @db.Uuid
+  usuario_id String    @db.Uuid
+  usuario    Usuario   @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  tipo       String?   @db.VarChar(50)
+  mensaje    String?   @db.Text
+  nivel      String?   @default("INFO") @db.VarChar(20)
+  resuelta   Boolean   @default(false)
+  created_at DateTime? @default(now())
+  
+  @@map("alertas")
 }
+
+model UsuarioGrupoHistorial {
+  id                String   @id @default(uuid()) @db.Uuid
+  usuario_id        String   @db.Uuid
+  usuario           Usuario  @relation(fields: [usuario_id], references: [id])
+  grupo_anterior_id String?  @db.Uuid
+  grupo_anterior    Grupo?   @relation("GrupoAnterior", fields: [grupo_anterior_id], references: [id])
+  grupo_nuevo_id    String?  @db.Uuid
+  grupo_nuevo       Grupo?   @relation("GrupoNuevo", fields: [grupo_nuevo_id], references: [id])
+  motivo            String?  @db.Text
+  changed_at        DateTime @default(now())
+
+  @@map("usuario_grupo_historial")
+}
+
+model ListaEspera {
+  id         String   @id @default(uuid()) @db.Uuid
+  usuario_id String   @db.Uuid
+  usuario    Usuario  @relation(fields: [usuario_id], references: [id])
+  motivo     String?  @db.Text
+  prioridad  Int      @default(1)
+  created_at DateTime @default(now())
+
+  @@map("lista_espera")
+}
+
+model BajasUsuario {
+  id         String   @id @default(uuid()) @db.Uuid
+  usuario_id String   @db.Uuid
+  usuario    Usuario  @relation(fields: [usuario_id], references: [id])
+  motivo     String?  @db.Text
+  fecha_baja DateTime @default(now())
+
+  @@map("bajas_usuario")
+}
+
+// =========================
+// SISTEMA Y UTILIDADES
+// =========================
+
+model Configuracion {
+  id          String    @id @default(uuid()) @db.Uuid
+  clave       String    @unique @db.VarChar(100)
+  valor       String?   @db.Text
+  descripcion String?   @db.Text
+  updated_at  DateTime? @default(now())
+  
+  @@map("configuraciones")
+}
+
+model Sincronizacion {
+  id          String    @id @default(uuid()) @db.Uuid
+  estado      String?   @db.VarChar(20)
+  porcentaje  Decimal?  @db.Decimal(5, 2)
+  mensaje     String?   @db.Text
+  last_sync   DateTime? @default(now())
+  
+  @@map("sincronizaciones")
+}
+
+model AuditoriaLog {
+  id          String    @id @default(uuid()) @db.Uuid
+  usuario_id  String?   @db.Uuid
+  accion      String?   @db.VarChar(100)
+  tabla       String?   @db.VarChar(100)
+  registro_id String?   @db.Uuid
+  detalles    Json?
+  created_at  DateTime? @default(now())
+  
+  @@map("auditoria_logs")
+}
+
+model Sesion {
+  id         String    @id @default(uuid()) @db.Uuid
+  usuario_id String?   @db.Uuid
+  usuario    Usuario?  @relation(fields: [usuario_id], references: [id])
+  token      String?   @db.Text
+  ip         String?   @db.VarChar(50)
+  user_agent String?   @db.Text
+  expira     DateTime?
+  created_at DateTime? @default(now())
+  
+  @@map("sesiones")
+}
+

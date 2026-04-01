@@ -1,0 +1,73 @@
+/* Asistencias Style Sheet */
+
+.asistencias-container {
+  @apply max-w-[1400px] mx-auto grid grid-cols-12 gap-8;
+}
+
+.asistencias-left-col {
+  @apply col-span-12 lg:col-span-9 space-y-6;
+}
+
+.asistencias-right-col {
+  @apply col-span-12 lg:col-span-3 space-y-6;
+}
+
+.asistencias-header {
+  @apply flex justify-between items-end;
+}
+
+.asistencias-title {
+  @apply text-3xl font-extrabold tracking-tight text-on-surface;
+}
+
+.asistencias-subtitle {
+  @apply text-on-surface-variant text-sm mt-1 font-medium;
+}
+
+.asistencias-actions-bar {
+  @apply flex gap-2;
+}
+
+.asistencias-table-container {
+  @apply bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden border border-outline-variant/10;
+}
+
+.asistencias-table {
+  @apply w-full border-collapse text-left;
+}
+
+.asistencias-table-header {
+  @apply bg-surface-container text-on-surface-variant text-[10px] uppercase tracking-widest font-bold;
+}
+
+.asistencias-row-hover {
+  @apply hover:bg-surface-container-low transition-colors group;
+}
+
+.asistencias-summary-grid {
+  @apply grid grid-cols-3 gap-6;
+}
+
+.asistencias-summary-card {
+  @apply p-4 rounded-xl flex items-center gap-4;
+}
+
+.asistencias-queue-card {
+  @apply bg-surface-container-low rounded-xl p-6 min-h-[500px] flex flex-col gap-6 border border-outline-variant/10;
+}
+
+.asistencias-queue-item {
+  @apply p-4 bg-surface-container-lowest rounded-lg border-l-4 shadow-sm hover:translate-x-1 transition-transform cursor-pointer;
+}
+
+.asistencias-fab {
+  @apply fixed bottom-8 right-8 w-14 h-14 bg-linear-to-br from-primary to-primary-dim text-white rounded-full shadow-xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all group z-50;
+}
+
+.asistencias-status-badge {
+  @apply px-2 py-1 rounded-full text-xs font-bold;
+}
+
+.asistencias-attendance-btn {
+  @apply w-8 h-8 rounded-md flex items-center justify-center mx-auto transition-all;
+}

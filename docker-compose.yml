@@ -1,4 +1,4 @@
-version: '3.8'
+# docker-compose.yml (Hybrid: Postgres + Backend ARRIBA)
 
 services:
   # Base de Datos PostgreSQL
@@ -43,20 +43,20 @@ services:
       - /app/node_modules
     restart: on-failure
 
-  # Frontend (React + Vite)
-  frontend:
-    build: ./frontend
-    container_name: nexus_frontend
-    ports:
-      - "5173:5173"
-    environment:
-      - VITE_API_URL=http://localhost:3000/api
-    depends_on:
-      - api
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    restart: always
+  # Frontend (React + Vite) - DESACTIVADO AQUÍ PARA DESARROLLO LOCAL
+  # frontend:
+  #   build: ./frontend
+  #   container_name: nexus_frontend
+  #   ports:
+  #     - "5173:5173"
+  #   environment:
+  #     - VITE_API_URL=http://localhost:3000/api
+  #   depends_on:
+  #     - api
+  #   volumes:
+  #     - ./frontend:/app
+  #     - /app/node_modules
+  #   restart: always
 
 volumes:
   postgres_data:

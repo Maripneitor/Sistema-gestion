@@ -3,29 +3,31 @@ import { miembrosService } from './miembros.service';
 
 export const asistenciasService = {
   async markPresence(data: any) {
-    const { miembro_id, estado_asistencia, registrado_por } = data;
+    const { usuario_id, estado, observaciones } = data;
 
     const asistencia = await prisma.asistencia.create({
       data: {
-        miembro_id,
-        estado_asistencia,
-        registrado_por,
+        usuario_id,
+        fecha: new Date(),
+        estado,
+        observaciones,
       },
-      include: { miembro: true },
+      include: { usuario: true },
     });
 
-    // Evaluamos si el miembro entra en riesgo de baja si se registró una falta
-    if (estado_asistencia === 'FALTA') {
-      await miembrosService.evaluarEstadoRiesgo(miembro_id);
-    }
+    // Actualizamos la última actividad del usuario de forma inmediata
+    await prisma.usuario.update({
+      where: { id: usuario_id },
+      data: { ultima_actividad: new Date() }
+    });
 
-    // DISPARO ASÍNCRONO HACIA GOOGLE SHEETS (SIN AWAIT)
+    // DISPARO ASÍNCRONO HACIA GOOGLE SHEETS
     import('./sheets.service').then(({ sheetsService }) => {
       sheetsService.appendAssistance({
-        nombre: asistencia.miembro.nombre_real,
+        nombre: asistencia.usuario.nombre,
         fecha: asistencia.fecha.toISOString(),
-        estado: estado_asistencia,
-        registradoPor: registrado_por,
+        estado: asistencia.estado,
+        observaciones: asistencia.observaciones,
       });
     }).catch(err => console.error('[Sheets Trigger Error]', err));
 
@@ -33,9 +35,8 @@ export const asistenciasService = {
   },
 
   async getVistaSemanal() {
-    // Calculamos el rango de la semana actual (Lunes a Domingo)
     const hoy = new Date();
-    const diaSemana = hoy.getDay() === 0 ? 6 : hoy.getDay() - 1; // 0 para Lunes, ..., 6 para Domingo
+    const diaSemana = hoy.getDay() === 0 ? 6 : hoy.getDay() - 1;
     const inicioSemana = new Date(hoy);
     inicioSemana.setDate(hoy.getDate() - diaSemana);
     inicioSemana.setHours(0, 0, 0, 0);
@@ -52,7 +53,7 @@ export const asistenciasService = {
         },
       },
       include: {
-        miembro: true,
+        usuario: true,
       },
       orderBy: {
         fecha: 'desc',

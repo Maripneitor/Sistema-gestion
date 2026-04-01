@@ -1,0 +1,65 @@
+/* Dashboard Style Sheet */
+
+.dashboard-container {
+  @apply pt-6 p-8 min-h-screen;
+}
+
+.dashboard-header {
+  @apply mb-10;
+}
+
+.dashboard-title {
+  @apply text-3xl font-extrabold font-headline tracking-tight text-on-surface mb-2;
+}
+
+.dashboard-subtitle {
+  @apply text-on-surface-variant max-w-2xl font-medium;
+}
+
+.dashboard-kpi-grid {
+  @apply grid grid-cols-1 md:grid-cols-4 gap-6 mb-8;
+}
+
+.dashboard-kpi-card {
+  @apply p-6 rounded-xl shadow-premium border-b-2 transition-all duration-300;
+}
+
+.dashboard-card-elevated {
+  @apply bg-surface-container-lowest p-8 rounded-2xl shadow-premium border border-primary/5;
+}
+
+.dashboard-chart-container {
+  @apply flex items-end justify-between h-48 gap-3;
+}
+
+.dashboard-chart-bar {
+  @apply w-full rounded-t-xl transition-all cursor-pointer relative group bg-surface-container hover:bg-primary/20;
+}
+
+.dashboard-chart-bar-active {
+  @apply bg-primary;
+}
+
+.dashboard-section-sidebar {
+  @apply lg:col-span-4 space-y-6;
+}
+
+.dashboard-risk-card {
+  @apply bg-surface-container-lowest p-6 rounded-2xl shadow-premium border border-error-container/20 overflow-hidden relative;
+}
+
+.dashboard-risk-item {
+  @apply flex items-center justify-between p-3 rounded-xl hover:bg-error/5 transition-all group border border-transparent hover:border-error/10;
+}
+
+.dashboard-sync-card {
+  @apply bg-surface-container p-6 rounded-2xl relative border border-primary/5 overflow-hidden group;
+}
+
+.dashboard-footer {
+  @apply mt-12 pt-8 border-t border-slate-200/50 flex justify-between items-center text-[10px] text-on-surface-variant font-bold uppercase tracking-widest opacity-50;
+}
+
+.dashboard-fab {
+  @apply fixed bottom-8 right-8 w-14 h-14 bg-editorial-gradient text-white rounded-2xl shadow-[0_8px_24px_-8px_rgba(12,86,208,0.6)] hover:shadow-[0_12px_32px_-8px_rgba(12,86,208,0.7)] hover:translate-y-[-4px] transition-all active:scale-95 flex items-center justify-center group z-50;
+}

@@ -1,75 +1,91 @@
-import prisma from '../utils/prisma';
-import { EstadoMiembro } from '@prisma/client';
+import prisma from '../utils/prisma.js';
 
 export const miembrosService = {
+  /**
+   * Obtiene todos los usuarios que no son administradores (Curadores)
+   */
   async getAll() {
-    return await prisma.miembro.findMany({
-      include: { asistencias: true },
+    return await prisma.usuario.findMany({
+      where: {
+        rol: {
+          nombre: {
+            in: ['ENCARGADO', 'ASISTENTE']
+          }
+        }
+      },
+      include: { 
+        rol: true,
+        asistencias: true 
+      },
     });
   },
 
   async create(data: any) {
-    // Validaciones estrictas
-    if (data.edad < 18) {
-      throw new Error('El miembro debe ser mayor de 18 años.');
+    // Validaciones de negocio alineadas con el manual de curadores
+    if (data.edad && data.edad < 18) {
+      throw new Error('El miembro debe ser mayor de 18 años para operar.');
     }
 
-    const paisesBloqueados = ['Perú', 'España', 'PERU', 'ESPAÑA'];
-    if (paisesBloqueados.includes(data.pais.toUpperCase()) || paisesBloqueados.includes(data.pais)) {
-      throw new Error('El registro no está permitido para el pais especificado.');
-    }
-
-    return await prisma.miembro.create({ data });
+    // El password por defecto para nuevos curadores (debe ser cambiado tras el primer login)
+    // Nota: Aquí se debería recibir el hashbcrypt del controller o generarlo
+    
+    return await prisma.usuario.create({ 
+      data: {
+        ...data,
+        activo: true
+      }
+    });
   },
 
   async update(id: string, data: any) {
-    const actualizado = await prisma.miembro.update({
+    const actualizado = await prisma.usuario.update({
       where: { id },
       data,
+      include: { rol: true }
     });
 
-    // DISPARO ASÍNCRONO SI CAMBIÓ EL NIVEL
-    if (data.nivel !== undefined) {
-      import('./sheets.service').then(({ sheetsService }) => {
-        sheetsService.updateMemberLevel({
-          nombre: actualizado.nombre_real,
-          nivel: actualizado.nivel,
-        });
-      }).catch(err => console.error('[Sheets Trigger Error]', err));
+    // SISTEMA DE ALERTAS AUTOMÁTICAS: Si se marca como inactivo
+    if (data.activo === false) {
+      await prisma.alerta.create({
+        data: {
+          usuario_id: id,
+          tipo: 'BAJA_ADMINISTRATIVA',
+          mensaje: `El usuario ${actualizado.nombre} ha sido desactivado del sistema.`,
+          nivel: 'WARNING'
+        }
+      });
     }
 
     return actualizado;
   },
 
   async delete(id: string) {
-    return await prisma.miembro.delete({ where: { id } });
+    // Se recomienda soft delete (desactivar activo) en lugar de borrado físico para auditoría
+    return await prisma.usuario.update({ 
+      where: { id },
+      data: { activo: false }
+    });
   },
 
   /**
-   * Evalúa si el miembro debe entrar en riesgo de baja por faltas.
-   * Sistema de reemplazo sugerido por el usuario.
+   * Registra una asistencia para un usuario
    */
-  async evaluarEstadoRiesgo(miembroId: string, limiteFaltas: number = 3) {
-    const miembro = await prisma.miembro.findUnique({
-      where: { id: miembroId },
-      include: { asistencias: true },
+  async registrarAsistencia(usuarioId: string, estado: string, observaciones?: string) {
+    const asistencia = await prisma.asistencia.create({
+      data: {
+        usuario_id: usuarioId,
+        fecha: new Date(),
+        estado,
+        observaciones
+      }
     });
 
-    if (!miembro) throw new Error('Miembro no encontrado.');
+    // Actualizamos la última actividad del usuario
+    await prisma.usuario.update({
+      where: { id: usuarioId },
+      data: { ultima_actividad: new Date() }
+    });
 
-    // Contamos las faltas en las asistencias registradas
-    const totalFaltas = miembro.asistencias.filter(a => a.estado_asistencia === 'FALTA').length;
-
-    if (totalFaltas >= limiteFaltas && miembro.estado === EstadoMiembro.ACTIVO) {
-      return await prisma.miembro.update({
-        where: { id: miembroId },
-        data: {
-          estado: EstadoMiembro.EN_RIESGO_DE_BAJA,
-          faltas_acumuladas: totalFaltas,
-        },
-      });
-    }
-
-    return miembro;
+    return asistencia;
   }
 };

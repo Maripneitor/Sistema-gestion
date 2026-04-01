@@ -29,7 +29,7 @@ body {
   vertical-align: middle;
 }
 
-.celeste-gradient {
+.celeste-gradient, .bg-editorial-gradient {
   background: linear-gradient(135deg, #0c56d0 0%, #004aba 100%);
 }
 

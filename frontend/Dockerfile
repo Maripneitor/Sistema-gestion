@@ -9,7 +9,9 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml* ./
 
 # Instalar pnpm globalmente e instalar dependencias
-RUN npm install -g pnpm && pnpm install
+RUN npm install -g pnpm && \
+    pnpm config set only-built-dependencies --json '["esbuild"]' && \
+    pnpm install
 
 # Copiar el resto del código
 COPY . .
